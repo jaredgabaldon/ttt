@@ -4,3 +4,7 @@ media/
 .venv/
 venv/
 .env
+
+node_modules/
+dist/
+.vite/

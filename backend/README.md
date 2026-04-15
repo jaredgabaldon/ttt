@@ -1,6 +1,6 @@
-# Collector Shop API
+# Teri's Toys and Trinkets API
 
-A very small read-only Django REST Framework API for a collector-item catalog.
+A very small read-only Django REST Framework API for a toy-and-trinket catalog.
 
 ## Setup
 
