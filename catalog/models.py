@@ -32,6 +32,7 @@ class Item(models.Model):
     price = models.DecimalField(max_digits=8, decimal_places=2)
     stock = models.PositiveIntegerField(default=1)
     image = models.ImageField(upload_to="collector-items/", blank=True, null=True)
+    location = models.CharField(max_length=80, null=True, blank=True)
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
