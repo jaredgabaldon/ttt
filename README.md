@@ -39,3 +39,5 @@ AWS credentials should come from the normal AWS environment, IAM role, or deploy
 Item responses include `image` when a picture is available.
 
 Open `/api/` in a browser while the server is running to use DRF's browsable API.
+
+Quick change
