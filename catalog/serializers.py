@@ -23,6 +23,7 @@ class ItemSerializer(serializers.ModelSerializer):
             "condition",
             "price",
             "stock",
+            "image",
             "is_featured",
             "created_at",
         ]
