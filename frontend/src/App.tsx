@@ -108,16 +108,25 @@ export default function App() {
   return (
     <main>
       <header className="topbar">
-        <a className="brand" href="/">
-          Collector Shop
+        <a className="brand" href="/" aria-label="Teri's Toys and Trinkets home">
+          <img src="/teris-toys-and-trinkets-logo.png" alt="" />
+          <span>Teri's Toys and Trinkets</span>
         </a>
-        <span className="catalog-pill">Browse catalog</span>
+        <span className="catalog-pill">Magical finds, playful treasures</span>
       </header>
 
       <section className="storefront" aria-labelledby="storefront-title">
         <div className="intro">
-          <p className="eyebrow">Cards, figures, prints, and rare finds</p>
-          <h1 id="storefront-title">Find the piece your shelf is missing.</h1>
+          <p className="eyebrow">Toys, trinkets, crystals, and curious keepsakes</p>
+          <h1 id="storefront-title">A little magic for every collection.</h1>
+          <p className="intro-copy">
+            Browse dragon-guarded treasures, nostalgic toys, shiny little oddities,
+            and display-worthy finds from Teri's shelves.
+          </p>
+        </div>
+
+        <div className="logo-feature" aria-hidden="true">
+          <img src="/teris-toys-and-trinkets-logo.png" alt="" />
         </div>
 
         <form className="filters" onSubmit={(event) => event.preventDefault()}>
@@ -126,7 +135,7 @@ export default function App() {
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Pokemon, signed, sealed..."
+              placeholder="Dragon, plush, crystal, card..."
             />
           </label>
 
@@ -172,9 +181,14 @@ export default function App() {
       {error && <p className="notice">{error}</p>}
 
       <section className="catalog" aria-label="Products">
+        <div className="section-heading">
+          <p className="eyebrow">Current treasures</p>
+          <h2>Fresh from the toy chest</h2>
+        </div>
+
         <div className="products" aria-live="polite">
           {isLoading ? (
-            <p className="empty">Loading the good stuff...</p>
+            <p className="empty">Gathering the sparkly stuff...</p>
           ) : items.length ? (
             items.map((item) => {
               const description = item.description || "Freshly cataloged and ready.";
@@ -188,7 +202,7 @@ export default function App() {
                   <div className="product-body">
                     <div>
                       <p className="category">{item.category_name}</p>
-                      <h2>{item.name}</h2>
+                      <h3>{item.name}</h3>
                       <p
                         id={descriptionId}
                         className={`description${
@@ -212,7 +226,7 @@ export default function App() {
 
                     <div className="product-meta">
                       <span>{conditionLabel(item.condition)}</span>
-                      <span>{item.stock} in stock</span>
+                      <span>{item.stock} available</span>
                     </div>
 
                     <div className="product-footer">
@@ -224,7 +238,7 @@ export default function App() {
               );
             })
           ) : (
-            <p className="empty">No matching items yet.</p>
+            <p className="empty">No matching treasures yet.</p>
           )}
         </div>
       </section>

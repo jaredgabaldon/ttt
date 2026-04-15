@@ -1,6 +1,6 @@
-# Collector Shop Frontend
+# Teri's Toys and Trinkets Frontend
 
-Vite + React storefront for the Django REST Framework API in `../backend`.
+Vite + React catalog for the Django REST Framework API in `../backend`.
 
 ## Setup
 
