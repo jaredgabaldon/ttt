@@ -6,6 +6,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-only-change-me")
 DEBUG = os.getenv("DJANGO_DEBUG", "true").lower() in {"1", "true", "yes"}
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",") if os.getenv("DJANGO_ALLOWED_HOSTS") else []
+CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS") else []
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -48,12 +50,27 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "collector_shop.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+if os.getenv("POSTGRES_HOST"):
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("POSTGRES_DB", "defaultdb"),
+            "USER": os.getenv("POSTGRES_USER", "doadmin"),
+            "PASSWORD": os.getenv("POSTGRES_PASSWORD", ""),
+            "HOST": os.getenv("POSTGRES_HOST"),
+            "PORT": os.getenv("POSTGRES_PORT", "25060"),
+            "OPTIONS": {
+                "sslmode": os.getenv("POSTGRES_SSLMODE", "require"),
+            },
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -82,8 +99,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME")
+AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
 AWS_S3_CUSTOM_DOMAIN = os.getenv("AWS_S3_CUSTOM_DOMAIN")
-AWS_DEFAULT_ACL = None
+AWS_DEFAULT_ACL = os.getenv("AWS_DEFAULT_ACL") or None
 AWS_QUERYSTRING_AUTH = False
 
 STORAGES = {
@@ -101,9 +119,10 @@ if AWS_STORAGE_BUCKET_NAME:
         "OPTIONS": {
             "bucket_name": AWS_STORAGE_BUCKET_NAME,
             "region_name": AWS_S3_REGION_NAME,
+            "endpoint_url": AWS_S3_ENDPOINT_URL,
             "custom_domain": AWS_S3_CUSTOM_DOMAIN,
             "location": "media",
-            "default_acl": None,
+            "default_acl": AWS_DEFAULT_ACL,
             "querystring_auth": False,
         },
     }

@@ -1,0 +1,58 @@
+###########################
+# Frontend Deployment
+###########################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teris-frontend-deployment
+  labels:
+    app: teris-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: teris-frontend
+  template:
+    metadata:
+      labels:
+        app: teris-frontend
+    spec:
+      containers:
+        - name: teris-frontend
+          image: jaredgabaldon/teris-toys-and-trinkets-frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 20
+            periodSeconds: 30
+
+---
+###########################
+# Frontend Cluster IP Service
+###########################
+apiVersion: v1
+kind: Service
+metadata:
+  name: teris-frontend-service
+  labels:
+    app: teris-frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: teris-frontend
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http

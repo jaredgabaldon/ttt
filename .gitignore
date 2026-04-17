@@ -8,3 +8,6 @@ venv/
 node_modules/
 dist/
 .vite/
+# Local Kubernetes secrets
+manifests/*secret.yaml
+!manifests/*secret.yaml

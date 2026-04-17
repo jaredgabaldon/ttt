@@ -1,0 +1,23 @@
+###########################
+# Backend Config
+###########################
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: teris-backend-config
+  labels:
+    app: teris-backend
+data:
+  DJANGO_ALLOWED_HOSTS: "teristoysandtrinkets.com"
+  # The current app relies on Django's dev static/media serving for admin assets.
+  # Change this to "false" after adding production static serving, such as WhiteNoise or nginx/S3.
+  DJANGO_DEBUG: "true"
+  DJANGO_CSRF_TRUSTED_ORIGINS: "https://teristoysandtrinkets.com"
+  POSTGRES_HOST: "db-postgresql-sfo2-41105-do-user-35993427-0.h.db.ondigitalocean.com"
+  POSTGRES_PORT: "25060"
+  POSTGRES_DB: "defaultdb"
+  POSTGRES_SSLMODE: "require"
+  AWS_STORAGE_BUCKET_NAME: "teris-toys-and-trinkets-media"
+  AWS_S3_REGION_NAME: "sfo2"
+  AWS_S3_ENDPOINT_URL: "https://sfo2.digitaloceanspaces.com"
+  AWS_DEFAULT_ACL: "public-read"

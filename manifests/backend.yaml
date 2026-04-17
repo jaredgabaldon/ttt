@@ -1,0 +1,65 @@
+###########################
+# Backend Deployment
+###########################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teris-backend-deployment
+  labels:
+    app: teris-backend
+spec:
+  # Keep one replica while migrations run during container startup.
+  replicas: 1
+  selector:
+    matchLabels:
+      app: teris-backend
+  template:
+    metadata:
+      labels:
+        app: teris-backend
+    spec:
+      containers:
+        - name: teris-backend
+          image: jaredgabaldon/teris-toys-and-trinkets-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+              name: http
+          command: ["sh", "-c"]
+          args:
+            - python manage.py migrate && python manage.py runserver 0.0.0.0:8000
+          envFrom:
+            - configMapRef:
+                name: teris-backend-config
+            - secretRef:
+                name: teris-backend-secret
+          readinessProbe:
+            tcpSocket:
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          livenessProbe:
+            tcpSocket:
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+
+---
+###########################
+# Backend Cluster IP Service
+###########################
+apiVersion: v1
+kind: Service
+metadata:
+  name: teris-backend-service
+  labels:
+    app: teris-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: teris-backend
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: http
