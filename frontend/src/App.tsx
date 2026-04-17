@@ -109,7 +109,7 @@ export default function App() {
     <main>
       <header className="topbar">
         <a className="brand" href="/" aria-label="Teri's Toys and Trinkets home">
-          <img src="/teris-toys-and-trinkets-logo.png" alt="" />
+          <img src="/header-dragon.png" alt="" />
           <span>Teri's Toys and Trinkets</span>
         </a>
         <nav className="header-links" aria-label="Teri's Toys and Trinkets links">
