@@ -152,7 +152,7 @@ export default function App() {
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="grogu, wednesday, owls..."
+              placeholder="naruto, grogu, fairies..."
             />
           </label>
 
