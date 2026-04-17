@@ -112,16 +112,33 @@ export default function App() {
           <img src="/teris-toys-and-trinkets-logo.png" alt="" />
           <span>Teri's Toys and Trinkets</span>
         </a>
-        <span className="catalog-pill">Magical finds, playful treasures</span>
+        <nav className="header-links" aria-label="Teri's Toys and Trinkets links">
+          <a href="https://ebay.us/m/w68zvy" target="_blank" rel="noreferrer">
+            eBay
+          </a>
+          <a
+            href="https://www.facebook.com/share/1BZNrSXU5V/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Facebook
+          </a>
+          <a href="mailto:teristoysandtrinkets@gmail.com">Email</a>
+        </nav>
       </header>
 
       <section className="storefront" aria-labelledby="storefront-title">
         <div className="intro">
-          <p className="eyebrow">Toys, trinkets, crystals, and curious keepsakes</p>
+          <p className="eyebrow">Toys, trinkets, artwork, and curious keepsakes</p>
           <h1 id="storefront-title">A little magic for every collection.</h1>
           <p className="intro-copy">
             Browse dragon-guarded treasures, nostalgic toys, shiny little oddities,
-            and display-worthy finds from Teri's shelves.
+            and display-worthy finds.
+          </p>
+          <p className="intro-copy">
+            Payment is accepted by cash, card, PayPal, or Venmo. Items can be
+            picked up locally in the Layton, UT area, and shipping is available
+            starting at $7 depending on weight and size.
           </p>
         </div>
 
@@ -135,7 +152,7 @@ export default function App() {
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Dragon, plush, crystal, card..."
+              placeholder="grogu, wednesday, owls..."
             />
           </label>
 
@@ -183,7 +200,6 @@ export default function App() {
       <section className="catalog" aria-label="Products">
         <div className="section-heading">
           <p className="eyebrow">Current treasures</p>
-          <h2>Fresh from the toy chest</h2>
         </div>
 
         <div className="products" aria-live="polite">

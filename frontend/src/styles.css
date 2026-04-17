@@ -88,7 +88,14 @@ main {
   overflow-wrap: anywhere;
 }
 
-.catalog-pill {
+.header-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.header-links a {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
@@ -98,6 +105,12 @@ main {
   color: var(--crystal);
   background: rgb(12 7 15 / 88%);
   font-weight: 800;
+  text-decoration: none;
+}
+
+.header-links a:hover {
+  border-color: var(--pink);
+  color: #ffffff;
 }
 
 .storefront {
@@ -369,9 +382,13 @@ select:focus {
     flex-direction: column;
   }
 
-  .catalog-pill {
+  .header-links {
     justify-content: center;
-    text-align: center;
+  }
+
+  .header-links a {
+    flex: 1 1 120px;
+    justify-content: center;
   }
 
   .storefront,
