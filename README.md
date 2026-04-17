@@ -44,5 +44,8 @@ Build the frontend image from the frontend directory:
 ```bash
 docker build -t jaredgabaldon/teris-toys-and-trinkets-frontend:latest frontend
 ```
+docker push jaredgabaldon/teris-toys-and-trinkets-frontend:latest
+
+docker push jaredgabaldon/teris-toys-and-trinkets-backend:latest
 
 The Kubernetes manifests in `manifests/` reference those image names.
