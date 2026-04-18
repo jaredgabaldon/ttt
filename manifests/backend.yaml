@@ -27,7 +27,7 @@ spec:
               name: http
           command: ["sh", "-c"]
           args:
-            - python manage.py migrate && python manage.py runserver 0.0.0.0:8000
+            - python manage.py migrate && python manage.py collectstatic --noinput && gunicorn collector_shop.wsgi:application --bind 0.0.0.0:8000
           envFrom:
             - configMapRef:
                 name: teris-backend-config

@@ -39,4 +39,4 @@ kubectl apply -k manifests
 
 ## Notes
 
-The backend manifest uses DigitalOcean Postgres and DigitalOcean Spaces connection values through environment variables. Spaces media is configured for the `teris-toys-and-trinkets-media` Space in `sfo2`; the real Spaces access keys belong in the `teris-backend-secret` Kubernetes Secret. It leaves `DJANGO_DEBUG=true` so Django can serve admin/static assets with the current code. For production, add production static serving, then set `DJANGO_DEBUG=false`.
+The backend manifest uses DigitalOcean Postgres and DigitalOcean Spaces connection values through environment variables. Spaces media is configured for the `teris-toys-and-trinkets-media` Space in `sfo2`; the real Spaces access keys belong in the `teris-backend-secret` Kubernetes Secret. The backend runs with `DJANGO_DEBUG=false`; admin and REST framework static assets are collected at container startup and served by WhiteNoise.
