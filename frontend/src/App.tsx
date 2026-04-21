@@ -133,7 +133,7 @@ export default function App() {
           <h1 id="storefront-title">A little magic for every collection.</h1>
           <p className="intro-copy">
             Browse dragon-guarded treasures, nostalgic toys, shiny little oddities,
-            and display-worthy finds.
+            and display-worthy finds. Contact me through email or Facebook. 
           </p>
           <p className="intro-copy">
             Payment is accepted by cash, card, PayPal, or Venmo. Items can be
