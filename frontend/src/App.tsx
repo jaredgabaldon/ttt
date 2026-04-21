@@ -133,7 +133,10 @@ export default function App() {
           <h1 id="storefront-title">A little magic for every collection.</h1>
           <p className="intro-copy">
             Browse dragon-guarded treasures, nostalgic toys, shiny little oddities,
-            and display-worthy finds. <span className="contact-highlight">Contact me through email or Facebook messenger.</span>
+            and display-worthy finds.
+          </p>
+          <p className="intro-copy">
+            <span className="contact-highlight">Contact me through email or Facebook messenger.</span>
           </p>
           <p className="intro-copy">
             Payment is accepted by cash, card, PayPal, or Venmo. Items can be
