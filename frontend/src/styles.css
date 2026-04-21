@@ -161,6 +161,11 @@ h1 {
   line-height: 1.65;
 }
 
+.contact-highlight {
+  color: var(--crystal);
+  font-weight: 900;
+}
+
 .logo-feature {
   display: grid;
   place-items: center;
