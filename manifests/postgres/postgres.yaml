@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: teris-postgres-data
+spec:
+  storageClassName: do-block-storage-retain
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: teris-postgres
+spec:
+  clusterIP: None
+  selector:
+    app: teris-postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: postgres
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: teris-postgres
+spec:
+  serviceName: teris-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: teris-postgres
+  template:
+    metadata:
+      labels:
+        app: teris-postgres
+    spec:
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: postgres
+          # Matches the exported DigitalOcean PostgreSQL version.
+          image: postgres:18.6
+          ports:
+            - name: postgres
+              containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: teris-postgres-credentials
+          env:
+            - name: PGDATA
+              value: /var/lib/postgresql/18/docker
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          startupProbe:
+            exec:
+              command: [sh, -c, 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"']
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            exec:
+              command: [sh, -c, 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"']
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command: [sh, -c, 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"']
+            periodSeconds: 20
+            failureThreshold: 6
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: teris-postgres-data

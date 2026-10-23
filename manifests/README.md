@@ -39,4 +39,10 @@ kubectl apply -k manifests
 
 ## Notes
 
-The backend manifest uses DigitalOcean Postgres and DigitalOcean Spaces connection values through environment variables. Spaces media is configured for the `teris-toys-and-trinkets-media` Space in `sfo2`; the real Spaces access keys belong in the `teris-backend-secret` Kubernetes Secret. The backend runs with `DJANGO_DEBUG=false`; admin and REST framework static assets are collected at container startup and served by WhiteNoise.
+The backend uses in-cluster PostgreSQL at `teris-postgres:5432` and continues using DigitalOcean Spaces for media. Database credentials come from `teris-postgres-app-credentials` through explicit environment variables; these override the legacy database credentials in `teris-backend-secret`. Provision the database and application credentials using [postgres/README.md](postgres/README.md) before deploying the backend. Spaces media is configured for the `teris-toys-and-trinkets-media` Space in `sfo2`; the real Spaces access keys belong in the `teris-backend-secret` Kubernetes Secret. The backend runs with `DJANGO_DEBUG=false`; admin and REST framework static assets are collected at container startup and served by WhiteNoise.
+
+## PostgreSQL migration preparation
+
+See [postgres/README.md](postgres/README.md) for the DigitalOcean export, separate database deployment, restore rehearsal, and cutover procedure. The app manifests now use the Kubernetes PostgreSQL database.
+
+Daily PostgreSQL backups run at 03:00 America/Denver and retain seven archives in a private Spaces prefix with seven-day expiration. See [backup operations](postgres/README.md#automated-daily-backups).

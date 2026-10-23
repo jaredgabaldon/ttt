@@ -45,13 +45,13 @@ Open `/api/` in a browser while the server is running to use DRF's browsable API
 
 ## Database
 
-The app uses SQLite locally when `POSTGRES_HOST` is not set. In Kubernetes, the manifests configure DigitalOcean Postgres with these environment variables:
+The app uses SQLite locally when `POSTGRES_HOST` is not set. In Kubernetes, the manifests configure the in-cluster PostgreSQL service with these environment variables:
 
 ```bash
-POSTGRES_HOST=db-postgresql-sfo2-41105-do-user-35993427-0.h.db.ondigitalocean.com
-POSTGRES_PORT=25060
+POSTGRES_HOST=teris-postgres
+POSTGRES_PORT=5432
 POSTGRES_DB=defaultdb
-POSTGRES_USER=doadmin
+POSTGRES_USER=teris_app
 POSTGRES_PASSWORD=your-password
-POSTGRES_SSLMODE=require
+POSTGRES_SSLMODE=disable
 ```

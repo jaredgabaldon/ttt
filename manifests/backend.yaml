@@ -27,21 +27,46 @@ spec:
               name: http
           command: ["sh", "-c"]
           args:
-            - python manage.py migrate && python manage.py collectstatic --noinput && gunicorn collector_shop.wsgi:application --bind 0.0.0.0:8000
+            - |
+              set -eux
+              echo "Running Django migrations"
+              python manage.py migrate --noinput
+              echo "Collecting static assets"
+              python manage.py collectstatic --noinput --verbosity 2
+              echo "Starting Gunicorn on :8000"
+              exec gunicorn collector_shop.wsgi:application --bind 0.0.0.0:8000
           envFrom:
             - configMapRef:
                 name: teris-backend-config
             - secretRef:
                 name: teris-backend-secret
+          # Explicit values override the old database credentials in envFrom.
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: teris-postgres-app-credentials
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: teris-postgres-app-credentials
+                  key: POSTGRES_PASSWORD
+          # Allow migrations and collectstatic to finish before liveness checks begin.
+          startupProbe:
+            tcpSocket:
+              port: 8000
+            periodSeconds: 10
+            failureThreshold: 30
           readinessProbe:
             tcpSocket:
               port: 8000
-            initialDelaySeconds: 10
+            initialDelaySeconds: 20
             periodSeconds: 15
           livenessProbe:
             tcpSocket:
               port: 8000
-            initialDelaySeconds: 30
+            initialDelaySeconds: 60
             periodSeconds: 30
 
 ---

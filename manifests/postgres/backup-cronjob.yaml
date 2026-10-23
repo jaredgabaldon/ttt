@@ -1,0 +1,92 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: teris-postgres-backup
+spec:
+  schedule: "0 3 * * *"
+  timeZone: America/Denver
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 3600
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 1800
+      template:
+        metadata:
+          labels:
+            app: teris-postgres-backup
+        spec:
+          restartPolicy: Never
+          automountServiceAccountToken: false
+          initContainers:
+            - name: dump
+              image: postgres:18.6
+              env:
+                - name: PGHOST
+                  value: teris-postgres
+                - name: PGPORT
+                  value: "5432"
+                - name: PGDATABASE
+                  value: defaultdb
+                - name: PGUSER
+                  valueFrom:
+                    secretKeyRef:
+                      name: teris-postgres-app-credentials
+                      key: POSTGRES_USER
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: teris-postgres-app-credentials
+                      key: POSTGRES_PASSWORD
+                - name: PGCONNECT_TIMEOUT
+                  value: "15"
+              command: [sh, -ec]
+              args:
+                - |
+                  umask 077
+                  pg_dump --no-password --format=custom --no-acl --file=/backup/database.dump
+                  pg_restore --list /backup/database.dump > /dev/null
+                  echo "Database archive created and readable"
+              volumeMounts:
+                - name: backup
+                  mountPath: /backup
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+          containers:
+            - name: upload
+              # This backend image includes boto3; no runtime package installation.
+              image: jaredgabaldon/teris-toys-and-trinkets-backend:latest
+              command: [python, /scripts/backup.py]
+              env:
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: teris-backend-secret
+                      key: AWS_ACCESS_KEY_ID
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: teris-backend-secret
+                      key: AWS_SECRET_ACCESS_KEY
+              volumeMounts:
+                - name: backup
+                  mountPath: /backup
+                  readOnly: true
+                - name: script
+                  mountPath: /scripts
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+          volumes:
+            - name: backup
+              emptyDir:
+                sizeLimit: 2Gi
+            - name: script
+              configMap:
+                name: teris-postgres-backup-script

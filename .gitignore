@@ -12,4 +12,8 @@ dist/
 # Local Kubernetes secrets
 manifests/*secret.yaml
 manifests/backend-secret.yaml
-!manifests/*secret.yaml
+!manifests/*secret.example.yaml
+
+manifests/postgres/credentials.env
+backups/
+*.dump
