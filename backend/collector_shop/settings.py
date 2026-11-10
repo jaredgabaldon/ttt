@@ -127,7 +127,7 @@ if AWS_STORAGE_BUCKET_NAME:
             "region_name": AWS_S3_REGION_NAME,
             "endpoint_url": AWS_S3_ENDPOINT_URL,
             "custom_domain": AWS_S3_CUSTOM_DOMAIN,
-            "location": "media",
+            "location": os.getenv("AWS_LOCATION", "media"),
             "default_acl": AWS_DEFAULT_ACL,
             "querystring_auth": False,
         },

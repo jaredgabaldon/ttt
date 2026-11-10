@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: teris-backend
-          image: jaredgabaldon/teris-toys-and-trinkets-backend:latest
+          image: jaredgabaldon/teris-toys-and-trinkets-backend:spaces-ttt-20261110
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
@@ -40,8 +40,18 @@ spec:
                 name: teris-backend-config
             - secretRef:
                 name: teris-backend-secret
-          # Explicit values override the old database credentials in envFrom.
+          # Explicit values override legacy database and Spaces credentials in envFrom.
           env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: compuweather-spaces-credentials
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: compuweather-spaces-credentials
+                  key: AWS_SECRET_ACCESS_KEY
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:

@@ -16,7 +16,7 @@ Manifests for `teristoysandtrinkets.com`, following the current PowerCluster pat
 Before applying, create the `teris-backend-secret` Secret and make sure these images exist:
 
 ```text
-jaredgabaldon/teris-toys-and-trinkets-backend:latest
+jaredgabaldon/teris-toys-and-trinkets-backend:spaces-ttt-20261110
 jaredgabaldon/teris-toys-and-trinkets-frontend:latest
 ```
 
@@ -31,7 +31,9 @@ kubectl create secret generic teris-backend-secret \
   --from-literal=AWS_SECRET_ACCESS_KEY='your-spaces-secret-key'
 ```
 
-Then run:
+The deployment also requires `compuweather-spaces-credentials` with `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, authorized for `power-bucket`. Explicit Secret references override the legacy Spaces keys above. Do not import this shared Secret’s bucket settings: those refer to CompuWeather.
+
+The bucket migration is complete; see [spaces-migration.md](spaces-migration.md) for verification and recovery notes. To apply the current manifests, run:
 
 ```bash
 kubectl apply -k manifests
@@ -39,10 +41,10 @@ kubectl apply -k manifests
 
 ## Notes
 
-The backend uses in-cluster PostgreSQL at `teris-postgres:5432` and continues using DigitalOcean Spaces for media. Database credentials come from `teris-postgres-app-credentials` through explicit environment variables; these override the legacy database credentials in `teris-backend-secret`. Provision the database and application credentials using [postgres/README.md](postgres/README.md) before deploying the backend. Spaces media is configured for the `teris-toys-and-trinkets-media` Space in `sfo2`; the real Spaces access keys belong in the `teris-backend-secret` Kubernetes Secret. The backend runs with `DJANGO_DEBUG=false`; admin and REST framework static assets are collected at container startup and served by WhiteNoise.
+The backend uses in-cluster PostgreSQL at `teris-postgres:5432` and continues using DigitalOcean Spaces for media. Database credentials come from `teris-postgres-app-credentials` through explicit environment variables; these override the legacy database credentials in `teris-backend-secret`. Provision the database and application credentials using [postgres/README.md](postgres/README.md) before deploying the backend. The manifests configure Spaces media for `power-bucket` in `sfo3`; both media and backup uploads use keys from `compuweather-spaces-credentials`. The backend runs with `DJANGO_DEBUG=false`; admin and REST framework static assets are collected at container startup and served by WhiteNoise.
 
 ## PostgreSQL migration preparation
 
 See [postgres/README.md](postgres/README.md) for the DigitalOcean export, separate database deployment, restore rehearsal, and cutover procedure. The app manifests now use the Kubernetes PostgreSQL database.
 
-Daily PostgreSQL backups run at 03:00 America/Denver and retain seven archives in a private Spaces prefix with seven-day expiration. See [backup operations](postgres/README.md#automated-daily-backups).
+Daily PostgreSQL backups run at 03:00 America/Denver and retain seven archives in a private Spaces prefix. Seven-day bucket expiration is configured for `ttt/database-backups/postgres/`. See [backup operations](postgres/README.md#automated-daily-backups).

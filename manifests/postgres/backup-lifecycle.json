@@ -1,7 +1,7 @@
 {
   "ID": "teris-postgres-backups-seven-days",
   "Status": "Enabled",
-  "Filter": {"Prefix": "database-backups/postgres/"},
+  "Filter": {"Prefix": "ttt/database-backups/postgres/"},
   "Expiration": {"Days": 7},
   "AbortIncompleteMultipartUpload": {"DaysAfterInitiation": 1}
 }

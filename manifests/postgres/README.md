@@ -99,14 +99,14 @@ Private pre-cutover deployment, ConfigMap, and Secret snapshots are in `backups/
 `teris-postgres-backup` runs daily at **03:00 America/Denver** (adjusts for daylight saving time). It uses PostgreSQL 18.6 `pg_dump` against `teris-postgres`, checks the custom archive with `pg_restore --list`, then uploads it with a private ACL to:
 
 ```text
-s3://teris-toys-and-trinkets-media/database-backups/postgres/postgres-YYYYMMDDTHHMMSSZ.dump
+s3://power-bucket/ttt/database-backups/postgres/postgres-YYYYMMDDTHHMMSSZ.dump
 ```
 
-The upload is downloaded and SHA-256 checked before pruning. The job retains at most seven successful archives and removes archives at least seven days old on each successful run. Spaces also has a seven-day expiration rule scoped exclusively to `database-backups/postgres/`, plus one-day incomplete multipart upload cleanup. Product images are unaffected. Spaces expiration is asynchronous, so deletion is not guaranteed at the exact seven-day timestamp, particularly if scheduled jobs fail. The local migration export and rollback snapshots are not managed by this cloud retention rule.
+The upload is downloaded and SHA-256 checked before pruning. The job retains at most seven successful archives and removes archives at least seven days old on each successful run. The `power-bucket` Space has a verified seven-day expiration rule scoped exclusively to `ttt/database-backups/postgres/`, plus one-day incomplete multipart upload cleanup. Product images are outside all expiration rules. The application’s object credentials cannot manage lifecycle settings; use the separate admin profile for configuration. Spaces expiration is asynchronous, so deletion is not guaranteed at the exact seven-day timestamp, particularly if scheduled jobs fail. The local migration export and rollback snapshots are not managed by this cloud retention rule.
 
-`backup-lifecycle.json` contains a single rule, not a full bucket lifecycle configuration. It was merged into the live bucket rules separately from Kubernetes; reapplying Kustomize does not configure Spaces. Preserve unrelated rules when updating it.
+`backup-lifecycle.json` contains a single rule, not a full bucket lifecycle configuration. It was applied to the new bucket separately from Kubernetes; reapplying Kustomize does not configure Spaces. Preserve unrelated rules when updating it.
 
-The CronJob prevents overlapping scheduled runs, retries failures twice, and limits jobs to 30 minutes. Temporary archive storage is capped at 2Gi; increase this if the database outgrows it. Uploads use the existing Spaces keys from `teris-backend-secret`; database access uses `teris-postgres-app-credentials`. The uploader uses the backend image's existing boto3 installation. Rotating either Secret applies to future backup pods.
+The CronJob prevents overlapping scheduled runs, retries failures twice, and limits jobs to 30 minutes. Temporary archive storage is capped at 2Gi; increase this if the database outgrows it. Uploads use the existing Spaces keys from `compuweather-spaces-credentials`; database access uses `teris-postgres-app-credentials`. The uploader uses the backend image's existing boto3 installation. Rotating either Secret applies to future backup pods. The upload container reads its bucket, backup prefix, endpoint, and region from `teris-backend-config`, sharing the application’s storage destination. Apply the updated backup manifests when changing the script; changing the backend ConfigMap alone does not deploy script changes.
 
 ```sh
 kubectl --context=do-sfo3-power-cluster-1 -n default get cronjob teris-postgres-backup

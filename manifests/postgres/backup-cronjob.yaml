@@ -59,18 +59,38 @@ spec:
           containers:
             - name: upload
               # This backend image includes boto3; no runtime package installation.
-              image: jaredgabaldon/teris-toys-and-trinkets-backend:latest
+              image: jaredgabaldon/teris-toys-and-trinkets-backend:spaces-ttt-20261110
               command: [python, /scripts/backup.py]
               env:
+                - name: SPACES_BACKUP_PREFIX
+                  valueFrom:
+                    configMapKeyRef:
+                      name: teris-backend-config
+                      key: SPACES_BACKUP_PREFIX
+                - name: AWS_STORAGE_BUCKET_NAME
+                  valueFrom:
+                    configMapKeyRef:
+                      name: teris-backend-config
+                      key: AWS_STORAGE_BUCKET_NAME
+                - name: AWS_S3_ENDPOINT_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: teris-backend-config
+                      key: AWS_S3_ENDPOINT_URL
+                - name: AWS_S3_REGION_NAME
+                  valueFrom:
+                    configMapKeyRef:
+                      name: teris-backend-config
+                      key: AWS_S3_REGION_NAME
                 - name: AWS_ACCESS_KEY_ID
                   valueFrom:
                     secretKeyRef:
-                      name: teris-backend-secret
+                      name: compuweather-spaces-credentials
                       key: AWS_ACCESS_KEY_ID
                 - name: AWS_SECRET_ACCESS_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: teris-backend-secret
+                      name: compuweather-spaces-credentials
                       key: AWS_SECRET_ACCESS_KEY
               volumeMounts:
                 - name: backup

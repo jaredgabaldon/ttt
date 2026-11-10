@@ -19,15 +19,16 @@ Items have an optional `image` field. In local development, uploaded files are s
 For DigitalOcean Spaces storage, set these environment variables before running Django:
 
 ```bash
-AWS_STORAGE_BUCKET_NAME=teris-toys-and-trinkets-media
-AWS_S3_REGION_NAME=sfo2
-AWS_S3_ENDPOINT_URL=https://sfo2.digitaloceanspaces.com
+AWS_STORAGE_BUCKET_NAME=power-bucket
+AWS_LOCATION=ttt/media
+AWS_S3_REGION_NAME=sfo3
+AWS_S3_ENDPOINT_URL=https://sfo3.digitaloceanspaces.com
 AWS_S3_CUSTOM_DOMAIN=your-cdn-domain.example.com  # optional, only if CDN is enabled
 AWS_ACCESS_KEY_ID=your-spaces-access-key
 AWS_SECRET_ACCESS_KEY=your-spaces-secret-key
 ```
 
-The Space origin endpoint is `https://teris-toys-and-trinkets-media.sfo2.digitaloceanspaces.com`. Keep access keys in environment variables or Kubernetes Secrets, not committed files.
+The Space origin endpoint is `https://power-bucket.sfo3.digitaloceanspaces.com`. Keep access keys in environment variables or Kubernetes Secrets, not committed files.
 
 ## API
 

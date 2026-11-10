@@ -5,9 +5,13 @@ from pathlib import Path
 
 import boto3
 
-BUCKET = "teris-toys-and-trinkets-media"
-PREFIX = "database-backups/postgres/"
-s3 = boto3.client("s3", endpoint_url="https://sfo2.digitaloceanspaces.com", region_name="sfo2")
+BUCKET = os.environ["AWS_STORAGE_BUCKET_NAME"]
+PREFIX = os.environ["SPACES_BACKUP_PREFIX"]
+s3 = boto3.client(
+    "s3",
+    endpoint_url=os.environ["AWS_S3_ENDPOINT_URL"],
+    region_name=os.environ["AWS_S3_REGION_NAME"],
+)
 archive = Path("/backup/database.dump")
 digest = hashlib.sha256(archive.read_bytes()).hexdigest()
 key = PREFIX + "postgres-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + ".dump"
